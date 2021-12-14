@@ -1,0 +1,114 @@
+module micro_wave(clk,rst_n,sig,valid);
+input clk;
+input rst_n;
+input sig;
+input sigOP;
+output reg power;
+parameter OFF = 4'b0000;
+parameter WAIT = 4'b0001;
+parameter Full_Power = 4'b0010;
+parameter Half_Power = 4'b0011;
+parameter Operation = 4'b0100;
+parameter Timer = 4'b0101;
+parameter OPEN = 4'b0110;
+parameter CLOSED = 4'b0111;
+parameter RUNNING = 4'b1000;
+parameter Deforst = 4'b1001;
+parameter Low = 4'b1010;
+parameter High = 4'b 1011;
+
+reg [3:0] current_state, next_state;
+always@(*) begin
+  case(current_state[3:0])
+    
+    OFF: begin
+      if(~sig) 
+        next_state = current_state;
+      else 
+        next_state = WAIT;
+        //monitor display operation's option
+    end
+    
+    WAIT: begin
+      if(sig == sigFP) 
+        next_state = Full_Power;
+      else if (sig == sigHP)
+        next_state = Half_Power;
+      else if (sig == sigOP)
+        case(sigOP)
+          1: next_state = Deforst;
+          2: next_state = Low;
+          3: next_state = Medium;
+          4: next_state = High;
+        endcase
+      else if (sig ==  1)
+        next_state = current_state;
+      else
+        next_state = OFF;      
+    end
+    
+    Full_Power: begin
+      if (sig == sigCancel)
+        next_state = WAIT;
+      else 
+        next_state = Timer;
+    end
+    
+     Half_Power: begin
+      if (sig == sigCancel)
+        next_state = WAIT;
+      else 
+        next_state = Timer;
+    end
+    
+    Deforst: begin
+      if (sig == sigCancel)
+        next_state = WAIT;
+      else 
+        next_state = Timer;
+    end
+    
+    Low: begin
+      if (sig == sigCancel)
+        next_state = WAIT;
+      else 
+        next_state = Timer;
+    end
+    
+    Medium: begin
+      if (sig == sigCancel)
+        next_state = WAIT;
+      else 
+        next_state = Timer;
+    end
+    
+    High: begin
+      if (sig == sigCancel)
+        next_state = WAIT;
+      else 
+        next_state = Timer;
+    end
+
+
+
+
+    
+    
+    
+      
+        
+        
+        
+
+    
+      
+      
+    
+    
+        
+    
+        
+      
+
+
+
